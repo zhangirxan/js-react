@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Task 0 - JS Refresher</title>
+<style>
+  body {
+    font-family: Georgia, "Times New Roman", serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 15px 80px;
+    color: #2b2620;
+    background: #e8e2d4;
+    line-height: 1.5;
+  }
+  h1 {
+    font-size: 24px;
+    border-bottom: 3px solid #3d3628;
+    padding-bottom: 8px;
+  }
+  h1 + p {
+    color: #6b6252;
+    font-size: 14px;
+    font-style: italic;
+  }
+  h2 {
+    font-size: 18px;
+    margin-top: 45px;
+    border-bottom: 1px solid #c9c0aa;
+    padding-bottom: 4px;
+  }
+  pre {
+    background: #f2ede0;
+    border: 1px solid #cfc6b0;
+    padding: 10px 12px;
+    overflow-x: auto;
+    font-size: 13px;
+    font-family: Consolas, Menlo, monospace;
+  }
+  .out {
+    background: #fbf8ee;
+    border: 1px dashed #b3a888;
+    padding: 8px 12px;
+    margin-top: 6px;
+    font-family: Consolas, Menlo, monospace;
+    font-size: 13px;
+  }
+  .out div { margin: 2px 0; }
+  .out b { color: #5c5340; }
+  .notes {
+    margin-top: 10px;
+    font-size: 14.5px;
+  }
+  .notes p { margin: 6px 0; }
+  hr {
+    border: none;
+    border-top: 1px dotted #a89e84;
+    margin: 40px 0;
+  }
+  footer {
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+    margin-top: 60px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Task 0 - JavaScript Refresher</h1>
+
+<!-- 1 -->
+<h2>1 - Variables and Data Types</h2>
+<pre><code>let studentName = "Zhangirkhan";
+let age = 20;
+let isActive = true;
+let courses = ["Math", "Physics", "React"];
+let address = { city: "Almaty", street: "Askarov" };
+
+let middleName;      // undefined, didn't set it
+let secondCourse = null;  // explicitly nothing
+
+console.log(typeof studentName, typeof age, typeof isActive);
+console.log(typeof courses); // object, even though it's an array
+console.log(`${studentName} is ${age} years old and lives in ${address.city}`);</code></pre>
+<div class="out" id="o1"></div>
+<div class="notes">
+<p><b>let vs const</b> - const just means you can't reassign the variable itself. if it's an object you can still change its fields, so const doesn't really mean "frozen".</p>
+<p><b>typeof null</b> returns "object", which is wrong/weird and everyone agrees it's a bug that's just stuck in the language forever.</p>
+<p><b>primitives</b>: string, number, boolean, undefined, null, symbol, bigint. arrays and objects are not primitives, they're references.</p>
+<p>name/age/isActive get copied by value, courses/address get copied by reference (see task 5, that's where it actually matters).</p>
+</div>
+
+<hr>
+
+<!-- 2 -->
+<h2>2 - Arrays</h2>
+<pre><code>const numbers = [3, 7, 2, 10, 5];
+
+const doubled = numbers.map(n => n * 2);
+const above5 = numbers.filter(n => n > 5);
+const firstAbove5 = numbers.find(n => n > 5);
+let total = numbers.reduce((sum, n) => sum + n, 0);
+const has10 = numbers.includes(10);
+
+console.log(numbers); // still [3,7,2,10,5], untouched</code></pre>
+<div class="out" id="o2"></div>
+<div class="notes">
+<p>map/filter/reduce don't mutate the array, they just return new stuff, which is why the original numbers array is still the same at the end.</p>
+</div>
+
+<hr>
+
+<!-- 3 -->
+<h2>3 - Arrays of Objects</h2>
+<pre><code>const students = [
+  { id: 1, name: "Aigerim", grade: 85 },
+  { id: 2, name: "Nurlan", grade: 62 },
+  { id: 3, name: "Dana", grade: 91 },
+  { id: 4, name: "Yerlan", grade: 55 },
+];
+
+const passing = students.filter(s => s.grade >= 70);
+const justNames = students.map(s => s.name);
+const student3 = students.find(s => s.id === 3);
+
+// top student, could also just sort but reduce works fine
+let top = students[0];
+for (const s of students) {
+  if (s.grade > top.grade) top = s;
+}
+
+let avg = 0;
+for (const s of students) avg += s.grade;
+avg = avg / students.length;
+
+const withPassFlag = students.map(s => {
+  return { ...s, passed: s.grade >= 70 };
+});</code></pre>
+<div class="out" id="o3"></div>
+<div class="notes">
+<p>used a plain for-loop for top student and the average just to mix it up - reduce would do the same thing but honestly a loop reads fine too.</p>
+<p>for the passed flag, made a new object with spread instead of touching s directly, so the original students array is unchanged.</p>
+</div>
+
+<hr>
+
+<!-- 4 -->
+<h2>4 - Objects</h2>
+<pre><code>let user = {
+  id: 1,
+  name: "Zhangirkhan",
+  age: 20,
+  address: { city: "Almaty", street: "Abay" }
+};
+
+console.log(user.name, user.address.city);
+
+user.age = 21;          // just mutating directly here, whatever
+user.email = "zhangirkhan@mail.com";
+delete user.address.street;
+
+const { name, age } = user;
+const { address: { city } } = user;
+const { name: userName } = user;</code></pre>
+<div class="out" id="o4"></div>
+<div class="notes">
+<p>for this one I just mutated the object directly instead of copying it with spread like in task 3 - task doesn't say not to, and honestly sometimes that's just how it goes in real code.</p>
+<p>renaming during destructuring: <code>{ name: userName }</code> grabs the "name" field but stores it under the variable userName.</p>
+</div>
+
+<hr>
+
+<!-- 5 -->
+<h2>5 - Values and References</h2>
+<pre><code>let original = { name: "Alice", score: 10 };
+let copy = original;
+copy.score = 99;
+console.log(original.score); // 99 too! same object in memory
+
+let original2 = { name: "Alice", score: 10 };
+let realCopy = { ...original2 };
+realCopy.score = 50;
+console.log(original2.score); // still 10, spread made a new object
+
+let user2 = { name: "Alice", address: { city: "Almaty" } };
+let shallow = { ...user2 };
+shallow.address.city = "Astana";
+console.log(user2.address.city); // Astana!! spread is shallow, address itself wasn't copied
+
+let deep = { ...user2, address: { ...user2.address } };
+deep.address.city = "Karaganda";
+console.log(user2.address.city); // still Astana from before, unaffected now</code></pre>
+<div class="out" id="o5"></div>
+<div class="notes">
+<p><code>copy = original</code> doesn't copy anything, both variables just point at the same object.</p>
+<p>spread only copies one level deep. the address object inside is still shared unless you spread it too - this one got me for a second honestly.</p>
+</div>
+
+<hr>
+
+<!-- 6 -->
+<h2>6 - Functions</h2>
+<pre><code>function isEven(number) {
+  return number % 2 === 0;
+}
+
+function getFullName(firstName, lastName) {
+  return firstName + " " + lastName;
+}
+
+const calculatePrice = (price, quantity) => price * quantity;
+
+const calculateDiscount = (price, percent) => {
+  return price - (price * percent) / 100;
+};
+
+function getMax(a, b) {
+  if (a > b) return a;
+  return b;
+}</code></pre>
+<div class="out" id="o6"></div>
+<div class="notes">
+<p>mixed regular function / arrow function on purpose since the task asked for both. getFullName with string concat instead of a template literal just to change it up.</p>
+</div>
+
+<hr>
+
+<!-- 7 -->
+<h2>7 - Functions as Values</h2>
+<pre><code>function add(a, b) { return a + b; }
+function multiply(a, b) { return a * b; }
+
+function calculate(a, b, operation) {
+  return operation(a, b);
+}
+
+console.log(calculate(5, 3, add));
+console.log(calculate(5, 3, multiply));</code></pre>
+<div class="out" id="o7"></div>
+<div class="notes">
+<p>yes, functions can be stored in variables and passed around like any other value (that's what's happening with "operation" above).</p>
+<p><code>add</code> by itself is just a reference to the function. <code>add()</code> actually calls it and gives you back a number.</p>
+</div>
+
+<hr>
+
+<!-- 8 -->
+<h2>8 - Scope</h2>
+<pre><code>const message = "global";
+
+function scopeTest() {
+  let message = "function";
+  if (true) {
+    let message = "block";
+    console.log(message); // block
+  }
+  console.log(message); // function, if-block doesn't leak
+}
+scopeTest();
+console.log(message); // global
+
+{
+  var v = "var value";
+  let l = "let value";
+  const c = "const value";
+}
+console.log(v); // works, var ignores block scope
+// console.log(l) here would just throw, not defined outside the {}</code></pre>
+<div class="out" id="o8"></div>
+<div class="notes">
+<p>global scope = whole file can see it. function scope = only inside that function. block scope = only inside the {} it was declared in.</p>
+<p>var doesn't care about blocks (if/for/{}), only functions - that's basically the main reason people avoid it now and just use let/const.</p>
+</div>
+
+<hr>
+
+<!-- 9 -->
+<h2>9 - Closure</h2>
+<pre><code>function createCounter() {
+  let count = 0;
+  return function () {
+    count = count + 1;
+    return count;
+  };
+}
+
+const counter1 = createCounter();
+const counter2 = createCounter();
+console.log(counter1()); // 1
+console.log(counter1()); // 2
+console.log(counter1()); // 3
+console.log(counter2()); // 1, separate counter
+
+function createAdder(value) {
+  return num => num + value;
+}
+const addFive = createAdder(5);
+console.log(addFive(10)); // 15
+console.log(addFive(20)); // 25</code></pre>
+<div class="out" id="o9"></div>
+<div class="notes">
+<p>the inner function keeps a link to the variables around it even after createCounter is done running - that's the closure. each call to createCounter makes a fresh "count" so counter1 and counter2 don't share anything.</p>
+</div>
+
+<hr>
+
+<!-- 10 -->
+<h2>10 - Destructuring, Spread and Rest</h2>
+<pre><code>const numbers = [10, 20, 30, 40];
+const [first, second] = numbers;
+
+const user = { id: 1, name: "Aigerim", age: 21 };
+const { name, age } = user;
+
+const moreNumbers = [...numbers, 50];
+const olderUser = { ...user, age: 22 };
+const userWithEmail = { ...user, email: "aigerim@mail.com" };
+const combined = [1, 2].concat ? [...[1, 2], ...[3, 4]] : null; // just showing spread works for arrays too
+
+function sum(...nums) {
+  let total = 0;
+  for (const n of nums) total += n;
+  return total;
+}
+console.log(sum(1, 2));
+console.log(sum(1, 2, 3, 4));</code></pre>
+<div class="out" id="o10"></div>
+<div class="notes">
+<p>spread = unpacking values out of an array/object. rest = the opposite, packing a bunch of loose arguments into one array. same three dots, different job depending on which side it's on.</p>
+</div>
+
+<hr>
+
+<!-- 11 -->
+<h2>11 - Optional Chaining and Default Values</h2>
+<pre><code>const userA = { name: "Zhangirkhan", address: { city: "Almaty" } };
+const userB = { name: "Timur" }; // no address at all
+
+// userB.address.city would just crash the page here
+console.log(userA.address?.city);
+console.log(userB.address?.city); // undefined, no crash
+
+const cityA = userA.address?.city ?? "City not specified";
+const cityB = userB.address?.city ?? "City not specified";
+
+const values = [0, "", false, null, undefined];
+console.log(values.map(v => v || "fallback"));
+console.log(values.map(v => v ?? "fallback"));</code></pre>
+<div class="out" id="o11"></div>
+<div class="notes">
+<p>?. just stops and gives back undefined instead of erroring when something in the chain is missing.</p>
+<p>?? only falls back on null/undefined. || falls back on basically anything "falsy" - 0, empty string, false too - which is annoying if 0 or "" was actually a real value you wanted to keep. this is the difference people usually get wrong.</p>
+</div>
+
+<hr>
+
+<!-- Final -->
+<h2>Final Task</h2>
+<pre><code>const students = [
+  { id: 1, name: "Aigerim", age: 20, grades: [85, 90, 78] },
+  { id: 2, name: "Nurlan", age: 21, grades: [60, 55, 70] },
+  { id: 3, name: "Dana", age: 19, grades: [91, 95, 88] },
+  { id: 4, name: "Yerlan", age: 22, grades: [50, 65, 40] },
+  { id: 5, name: "Aidos", age: 20, grades: [72, 68, 80] },
+];
+
+function getAverage(grades) {
+  let sum = 0;
+  for (const g of grades) sum += g;
+  return sum / grades.length;
+}
+
+const getStudentAverage = student => getAverage(student.grades);
+
+function getPassedStudents(students) {
+  return students.filter(s => getStudentAverage(s) >= 60);
+}
+
+const getStudentNames = students => students.map(s => s.name);
+
+function findStudent(students, id) {
+  return students.find(s => s.id === id);
+}
+
+function getTopStudent(students) {
+  let top = students[0];
+  for (const s of students) {
+    if (getStudentAverage(s) > getStudentAverage(top)) top = s;
+  }
+  return top;
+}
+
+const summary = students.map(s => ({
+  id: s.id,
+  name: s.name,
+  average: Math.round(getStudentAverage(s) * 100) / 100,
+  passed: getStudentAverage(s) >= 60,
+}));</code></pre>
+<div class="out" id="o12"></div>
+<div class="notes">
+<p>mixed function declarations and arrow functions again here, mostly just personal habit depending on how short the function is.</p>
+</div>
+
+<footer>Task 0 - done, bonus point please :)</footer>
+
+<script>
+function log(id, label, val) {
+  const box = document.getElementById(id);
+  const line = document.createElement('div');
+  let shown;
+  if (val === undefined) shown = 'undefined';
+  else if (typeof val === 'object') shown = JSON.stringify(val);
+  else shown = String(val);
+  line.innerHTML = '<b>' + label + ':</b> ' + shown;
+  box.appendChild(line);
+}
+
+// 1
+let studentName = "Zhangirkhan";
+let age = 20;
+let isActive = true;
+let courses = ["Math", "Physics", "React"];
+let address = { city: "Almaty", street: "Askarov" };
+let middleName;
+let secondCourse = null;
+
+log('o1', 'typeof studentName', typeof studentName);
+log('o1', 'typeof age', typeof age);
+log('o1', 'typeof isActive', typeof isActive);
+log('o1', 'typeof courses', typeof courses);
+log('o1', 'middleName', middleName);
+log('o1', 'secondCourse', secondCourse);
+log('o1', 'sentence', studentName + " is " + age + " years old and lives in " + address.city);
+
+// 2
+(function () {
+  const numbers = [3, 7, 2, 10, 5];
+  const doubled = numbers.map(n => n * 2);
+  const above5 = numbers.filter(n => n > 5);
+  const firstAbove5 = numbers.find(n => n > 5);
+  let total = numbers.reduce((sum, n) => sum + n, 0);
+  const has10 = numbers.includes(10);
+
+  log('o2', 'doubled', doubled);
+  log('o2', 'above5', above5);
+  log('o2', 'firstAbove5', firstAbove5);
+  log('o2', 'total', total);
+  log('o2', 'has10', has10);
+  log('o2', 'numbers (unchanged)', numbers);
+})();
+
+// 3
+(function () {
+  const students = [
+    { id: 1, name: "Aigerim", grade: 85 },
+    { id: 2, name: "Nurlan", grade: 62 },
+    { id: 3, name: "Dana", grade: 91 },
+    { id: 4, name: "Yerlan", grade: 55 },
+  ];
+  const passing = students.filter(s => s.grade >= 70);
+  const justNames = students.map(s => s.name);
+  const student3 = students.find(s => s.id === 3);
+
+  let top = students[0];
+  for (const s of students) {
+    if (s.grade > top.grade) top = s;
+  }
+
+  let avg = 0;
+  for (const s of students) avg += s.grade;
+  avg = avg / students.length;
+
+  const withPassFlag = students.map(s => ({ ...s, passed: s.grade >= 70 }));
+
+  log('o3', 'passing', passing.map(s => s.name));
+  log('o3', 'justNames', justNames);
+  log('o3', 'student3', student3);
+  log('o3', 'top', top);
+  log('o3', 'avg', Math.round(avg * 100) / 100);
+  log('o3', 'withPassFlag', withPassFlag);
+})();
+
+// 4
+(function () {
+  let user = {
+    id: 1,
+    name: "Zhangirkhan",
+    age: 20,
+    address: { city: "Almaty", street: "Abay" }
+  };
+  log('o4', 'name + city', user.name + ", " + user.address.city);
+
+  user.age = 21;
+  user.email = "zhangirkhan@mail.com";
+  delete user.address.street;
+  log('o4', 'user after edits', user);
+
+  const { name, age } = user;
+  log('o4', '{name, age}', name + ' / ' + age);
+
+  const { address: { city } } = user;
+  log('o4', 'city (nested)', city);
+
+  const { name: userName } = user;
+  log('o4', 'userName (renamed)', userName);
+})();
+
+// 5
+(function () {
+  let original = { name: "Alice", score: 10 };
+  let copy = original;
+  copy.score = 99;
+  log('o5', 'copy=original -> original.score', original.score);
+
+  let original2 = { name: "Alice", score: 10 };
+  let realCopy = { ...original2 };
+  realCopy.score = 50;
+  log('o5', 'spread copy -> original2.score', original2.score);
+
+  let user2 = { name: "Alice", address: { city: "Almaty" } };
+  let shallow = { ...user2 };
+  shallow.address.city = "Astana";
+  log('o5', 'shallow -> user2.address.city', user2.address.city);
+
+  let deep = { ...user2, address: { ...user2.address } };
+  deep.address.city = "Karaganda";
+  log('o5', 'deep copy -> user2.address.city (safe now)', user2.address.city);
+})();
+
+// 6
+(function () {
+  function isEven(number) { return number % 2 === 0; }
+  function getFullName(firstName, lastName) { return firstName + " " + lastName; }
+  const calculatePrice = (price, quantity) => price * quantity;
+  const calculateDiscount = (price, percent) => price - (price * percent) / 100;
+  function getMax(a, b) { if (a > b) return a; return b; }
+
+  log('o6', 'isEven(7)', isEven(7));
+  log('o6', 'getFullName', getFullName("Zhangirkhan", "Askarbek"));
+  log('o6', 'calculatePrice(150,3)', calculatePrice(150, 3));
+  log('o6', 'calculateDiscount(1000,15)', calculateDiscount(1000, 15));
+  log('o6', 'getMax(4,9)', getMax(4, 9));
+})();
+
+// 7
+(function () {
+  function add(a, b) { return a + b; }
+  function multiply(a, b) { return a * b; }
+  function calculate(a, b, operation) { return operation(a, b); }
+
+  log('o7', 'calculate(5,3,add)', calculate(5, 3, add));
+  log('o7', 'calculate(5,3,multiply)', calculate(5, 3, multiply));
+})();
+
+// 8
+(function () {
+  const message = "global";
+  function scopeTest() {
+    let message = "function";
+    if (true) {
+      let message = "block";
+      log('o8', 'inside if', message);
+    }
+    log('o8', 'inside function after if', message);
+  }
+  scopeTest();
+  log('o8', 'global', message);
+
+  {
+    var v = "var value";
+    let l = "let value";
+    const c = "const value";
+  }
+  log('o8', 'var v outside block (leaks)', v);
+  log('o8', 'let/const outside block', 'not accessible, would throw ReferenceError');
+})();
+
+// 9
+(function () {
+  function createCounter() {
+    let count = 0;
+    return function () {
+      count = count + 1;
+      return count;
+    };
+  }
+  const counter1 = createCounter();
+  const counter2 = createCounter();
+  log('o9', 'counter1()', counter1());
+  log('o9', 'counter1()', counter1());
+  log('o9', 'counter1()', counter1());
+  log('o9', 'counter2() (separate)', counter2());
+
+  function createAdder(value) {
+    return num => num + value;
+  }
+  const addFive = createAdder(5);
+  log('o9', 'addFive(10)', addFive(10));
+  log('o9', 'addFive(20)', addFive(20));
+})();
+
+// 10
+(function () {
+  const numbers = [10, 20, 30, 40];
+  const [first, second] = numbers;
+  log('o10', 'first, second', first + ', ' + second);
+
+  const user = { id: 1, name: "Aigerim", age: 21 };
+  const { name, age } = user;
+  log('o10', 'name, age', name + ', ' + age);
+
+  const moreNumbers = [...numbers, 50];
+  log('o10', 'moreNumbers', moreNumbers);
+  log('o10', 'numbers (unchanged)', numbers);
+
+  const olderUser = { ...user, age: 22 };
+  log('o10', 'olderUser', olderUser);
+
+  const userWithEmail = { ...user, email: "aigerim@mail.com" };
+  log('o10', 'userWithEmail', userWithEmail);
+  log('o10', 'user (unchanged)', user);
+
+  const combined = [...[1, 2], ...[3, 4]];
+  log('o10', 'combined', combined);
+
+  function sum(...nums) {
+    let total = 0;
+    for (const n of nums) total += n;
+    return total;
+  }
+  log('o10', 'sum(1,2)', sum(1, 2));
+  log('o10', 'sum(1,2,3,4)', sum(1, 2, 3, 4));
+})();
+
+// 11
+(function () {
+  const userA = { name: "Zhangirkhan", address: { city: "Almaty" } };
+  const userB = { name: "Timur" };
+
+  log('o11', 'userA.address?.city', userA.address?.city);
+  log('o11', 'userB.address?.city', userB.address?.city);
+
+  const cityA = userA.address?.city ?? "City not specified";
+  const cityB = userB.address?.city ?? "City not specified";
+  log('o11', 'cityA', cityA);
+  log('o11', 'cityB', cityB);
+
+  const values = [0, "", false, null, undefined];
+  log('o11', 'with ||', values.map(v => v || "fallback"));
+  log('o11', 'with ??', values.map(v => v ?? "fallback"));
+})();
+
+// final
+(function () {
+  const students = [
+    { id: 1, name: "Aigerim", age: 20, grades: [85, 90, 78] },
+    { id: 2, name: "Nurlan", age: 21, grades: [60, 55, 70] },
+    { id: 3, name: "Dana", age: 19, grades: [91, 95, 88] },
+    { id: 4, name: "Yerlan", age: 22, grades: [50, 65, 40] },
+    { id: 5, name: "Aidos", age: 20, grades: [72, 68, 80] },
+  ];
+
+  function getAverage(grades) {
+    let sum = 0;
+    for (const g of grades) sum += g;
+    return sum / grades.length;
+  }
+  const getStudentAverage = student => getAverage(student.grades);
+  function getPassedStudents(students) { return students.filter(s => getStudentAverage(s) >= 60); }
+  const getStudentNames = students => students.map(s => s.name);
+  function findStudent(students, id) { return students.find(s => s.id === id); }
+  function getTopStudent(students) {
+    let top = students[0];
+    for (const s of students) {
+      if (getStudentAverage(s) > getStudentAverage(top)) top = s;
+    }
+    return top;
+  }
+
+  log('o12', 'passed students', getStudentNames(getPassedStudents(students)));
+  log('o12', 'all names', getStudentNames(students));
+  log('o12', 'findStudent(3)', findStudent(students, 3).name);
+  log('o12', 'top student', getTopStudent(students).name);
+
+  const summary = students.map(s => ({
+    id: s.id,
+    name: s.name,
+    average: Math.round(getStudentAverage(s) * 100) / 100,
+    passed: getStudentAverage(s) >= 60,
+  }));
+  log('o12', 'summary', summary);
+})();
+</script>
+
+</body>
+</html>
