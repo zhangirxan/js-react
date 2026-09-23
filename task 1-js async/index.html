@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS Runtime & Async</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>JavaScript Runtime &amp; Async</h1>
+    <p class="subtitle">Closures · Call Stack · Promises · async/await · Event Loop</p>
+  </header>
+
+  <main>
+    <!-- tasks -->
+    <section class="card">
+      <div class="section-head">
+        <h2>Tasks</h2>
+        <div class="actions">
+          <button id="runAllBtn" class="primary">Run All Tasks</button>
+          <button id="resetAllBtn">Reset All</button>
+        </div>
+      </div>
+
+      <table class="tasks">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Status</th>
+            <th>Runs</th>
+            <th>Time</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="taskRows"></tbody>
+      </table>
+
+      <p id="allStatus" class="all-status"></p>
+    </section>
+
+    <!-- sequential vs concurrent -->
+    <section class="card">
+      <div class="section-head">
+        <h2>Sequential vs Concurrent</h2>
+        <div class="actions">
+          <button id="compareBtn" class="primary">Compare</button>
+        </div>
+      </div>
+      <div class="compare">
+        <div class="compare-box">
+          <h3>Sequential <code>await</code> one by one</h3>
+          <pre><code>await task1.run();
+await task2.run();
+await task3.run();</code></pre>
+          <p class="result" id="seqResult">—</p>
+        </div>
+        <div class="compare-box">
+          <h3>Concurrent <code>Promise.allSettled</code></h3>
+          <pre><code>await Promise.allSettled(
+  tasks.map(t =&gt; t.run())
+);</code></pre>
+          <p class="result" id="conResult">—</p>
+        </div>
+      </div>
+      <p id="compareExplain" class="explain"></p>
+    </section>
+
+    <!-- event loop -->
+    <section class="card">
+      <div class="section-head">
+        <h2>Event Loop Demo</h2>
+        <div class="actions">
+          <button id="eventLoopBtn" class="primary">Run Event Loop Demo</button>
+        </div>
+      </div>
+
+      <pre class="demo-code"><code id="demoCode"></code></pre>
+
+      <div class="compare">
+        <div class="compare-box">
+          <h3>Expected output</h3>
+          <ol id="expectedList" class="log"></ol>
+        </div>
+        <div class="compare-box">
+          <h3>Actual output</h3>
+          <ol id="actualList" class="log"></ol>
+        </div>
+      </div>
+      <p id="eventLoopVerdict" class="explain"></p>
+
+      <details>
+        <summary>Step-by-step explanation</summary>
+        <ol class="steps">
+          <li><b>Call Stack</b> runs the whole script synchronously: <code>A: script start</code>,
+            then <code>asyncDemo()</code> is pushed on the stack and prints <code>B: async start</code>.
+            At <code>await</code> the function is paused and popped off the stack.
+            Then <code>C: script end</code>. The stack is now empty.</li>
+          <li>While the script ran, callbacks were only <i>scheduled</i>:
+            3 timers went to the <b>Task Queue</b> (through the Web API timer),
+            <code>.then</code> callbacks and the continuation after <code>await</code> went to the
+            <b>Microtask Queue</b> in the order they were registered.</li>
+          <li>The <b>Event Loop</b> sees an empty stack and drains <i>all</i> microtasks:
+            <code>D: promise 1</code>, <code>E: promise 2</code>, <code>F: async after await</code>.
+            <code>E</code> returned, so its chained <code>.then</code> is queued at the end →
+            <code>G: promise 2 → then</code>.</li>
+          <li>Only when the microtask queue is empty does the loop take <b>one</b> task:
+            <code>H: timeout 1</code>. Then <code>I: timeout 2</code>, which queues a microtask.</li>
+          <li>After every task the microtask queue is drained again, so
+            <code>J: microtask inside timeout 2</code> runs <b>before</b> <code>K: timeout 3</code>,
+            even though timeout 3 was scheduled long before.</li>
+        </ol>
+      </details>
+    </section>
+
+    <!-- log -->
+    <section class="card">
+      <div class="section-head">
+        <h2>Log</h2>
+        <div class="actions"><button id="clearLogBtn">Clear</button></div>
+      </div>
+      <ul id="log" class="event-log"></ul>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
