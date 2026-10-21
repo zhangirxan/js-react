@@ -184,10 +184,10 @@ export default function App() {
   const formMember = form?.mode === 'edit' ? form.member : null
 
   return (
-    <div className="app">
+    <>
       <Header total={list.total} />
 
-      <div className={`layout ${selectedId !== null ? 'has-selection' : ''}`}>
+      <div className={`app layout ${selectedId !== null ? 'has-selection' : ''}`}>
         <section className="list-column">
           <Toolbar
             search={query.search}
@@ -241,6 +241,6 @@ export default function App() {
       )}
 
       {notice && <Notice notice={notice} onClose={() => setNotice(null)} />}
-    </div>
+    </>
   )
 }

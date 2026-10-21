@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Avatar from './Avatar.jsx'
 import StatusBadge from './StatusBadge.jsx'
 import { EmptyMessage, ErrorMessage, Loader } from './StateMessage.jsx'
 
@@ -48,20 +49,24 @@ export default function DetailsPanel({ selectedId, state, pending, onClose, onRe
     body = (
       <>
         <div className="details-head">
-          <h2>{member.name}</h2>
+          <Avatar name={member.name} size={52} />
+          <div>
+            <h2>{member.name}</h2>
+            <p className="details-sub">
+              {member.rank} · {member.description}
+            </p>
+          </div>
           <StatusBadge status={member.status} />
         </div>
 
-        <table className="fields">
-          <tbody>
-            {fields.map(([label, value]) => (
-              <tr key={label}>
-                <th>{label}</th>
-                <td>{value ?? '—'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <dl className="fields">
+          {fields.map(([label, value]) => (
+            <div key={label} className={label === 'Skills' ? 'wide' : ''}>
+              <dt>{label}</dt>
+              <dd>{value ?? '—'}</dd>
+            </div>
+          ))}
+        </dl>
 
         {member.bio && <p className="bio">{member.bio}</p>}
 

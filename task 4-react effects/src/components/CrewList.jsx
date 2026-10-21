@@ -1,3 +1,4 @@
+import Avatar from './Avatar.jsx'
 import StatusBadge from './StatusBadge.jsx'
 import { EmptyMessage, ErrorMessage, Loader } from './StateMessage.jsx'
 
@@ -19,7 +20,6 @@ export default function CrewList({ state, search, selectedId, pending, onSelect,
       <thead>
         <tr>
           <th>Name</th>
-          <th>Role</th>
           <th className="hide-sm">Ship</th>
           <th>Status</th>
         </tr>
@@ -32,11 +32,14 @@ export default function CrewList({ state, search, selectedId, pending, onSelect,
             onClick={() => onSelect(member.id)}
           >
             <td>
-              <button type="button" className="name-link" onClick={() => onSelect(member.id)}>
-                {member.name}
+              <button type="button" className="person" onClick={() => onSelect(member.id)}>
+                <Avatar name={member.name} />
+                <span>
+                  <span className="person-name">{member.name}</span>
+                  <span className="person-role">{member.description}</span>
+                </span>
               </button>
             </td>
-            <td>{member.description}</td>
             <td className="hide-sm">{member.ship ?? '—'}</td>
             <td>
               {pending[member.id] ? (
