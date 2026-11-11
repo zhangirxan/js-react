@@ -1,0 +1,5 @@
+node_modules
+dist
+
+# firebase keys live here, never commit it
+.env.local
