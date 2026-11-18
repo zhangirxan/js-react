@@ -35,21 +35,25 @@ export function registerServiceWorker() {
     setInterval(() => registration.update(), 30 * 60 * 1000)
   })
 
-  // the new worker took control -> reload once to use the new files
-  let reloading = false
+  // the new worker took control after "Update now" -> reload once to use the new files.
+  // (on the very first visit the worker also takes control, but then nothing must reload)
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (reloading) return
-    reloading = true
+    if (!updateRequested) return
+    updateRequested = false
     window.location.reload()
   })
 }
+
+let updateRequested = false
 
 export function isUpdateReady() {
   return Boolean(waitingWorker)
 }
 
 export function applyUpdate() {
-  if (waitingWorker) waitingWorker.postMessage('SKIP_WAITING')
+  if (!waitingWorker) return
+  updateRequested = true
+  waitingWorker.postMessage('SKIP_WAITING')
 }
 
 export function subscribeToUpdates(listener) {
