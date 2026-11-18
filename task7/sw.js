@@ -1,19 +1,19 @@
 // AutoMarket service worker.
 // During the build Vite fills in VERSION and PRECACHE_FILES below (see vite.config.js).
 
-const VERSION = 'bde8b59a'
+const VERSION = '49a5ab63'
 const PRECACHE_FILES = [
-  "./assets/AboutPage-8YiUtn5Q.js",
-  "./assets/CarDetailsPage-CUi9EWeY.js",
-  "./assets/DashboardPage-D3g1VN_9.js",
-  "./assets/FirebaseWarning-DIoiifa_.js",
+  "./assets/AboutPage-DuzxAunF.js",
+  "./assets/CarDetailsPage--a36IsBn.js",
+  "./assets/DashboardPage-BtcjMf5Y.js",
+  "./assets/FirebaseWarning-Bq7uuAxr.js",
   "./assets/index-BaFOr6S8.css",
-  "./assets/index-eIkQf8Og.js",
-  "./assets/LoginPage-DtrR8gs6.js",
-  "./assets/NotFoundPage-ph6_Yvse.js",
-  "./assets/ProfilePage-CJ2VTp-4.js",
-  "./assets/SellPage-DTF_XNVi.js",
-  "./assets/SignupPage-BVmSbxfp.js",
+  "./assets/index-U0O14_Xi.js",
+  "./assets/LoginPage-BiWQLSs_.js",
+  "./assets/NotFoundPage-BI9BZ6Mc.js",
+  "./assets/ProfilePage-CzTVic-Y.js",
+  "./assets/SellPage-XP2ZMZu6.js",
+  "./assets/SignupPage-DAHpja6Z.js",
   "./favicon.svg",
   "./icons/apple-touch-icon.png",
   "./icons/icon-192.png",
